@@ -1,6 +1,7 @@
 # LiDAR_canopy
 **David T. Milodowski**, School of GeoSciences, University of Edinburgh
-September 2017
+
+(September 2017)
 
 This repository hosts a python library to extract quantitative information about forest canopies from discrete return LiDAR point clouds. It includes all the driver functions required to reproduce the analysis presented in the manuscript: "Estimating Canopy Structure Across A Degradation Gradient In Malaysian Borneo", submitted to Remote Sensing Of Environment.
 
