@@ -16,8 +16,6 @@ from scipy import stats
 
 from matplotlib import rcParams
 from datetime import datetime
-
-sys.path.append('/home/dmilodow/DataStore_DTM/BALI/SPA_BALI_data_and_analysis/scripts/field_data/')
 import load_field_data as cen
 
 # Set up some basiic parameters for the plots
@@ -44,7 +42,6 @@ output_dir = '/home/dmilodow/DataStore_DTM/BALI/PAPERS/PaperDrafts/EstimatingCan
 
 # define important parameters for canopy profile estimation
 Plots = ['LF','E','Belian','Seraya','B North','B South','DC1','DC2']
-#Plots = ['B North']
 N_plots = len(Plots)
 leaf_angle_dist = 'spherical'
 max_height = 80
@@ -111,7 +108,6 @@ for pp in range(0,N_plots):
     LAD_rad_DTM = np.zeros((n_subplots,heights_rad.size,max_return))
 
     # set up some arrays to host the MacArthur-Horn profiles
-    #heights = np.arange(0,max_height)+1
     heights = np.arange(0,max_height,layer_thickness)+layer_thickness
     LAD_MH = np.zeros((n_subplots, heights.size))
     
@@ -125,28 +121,9 @@ for pp in range(0,N_plots):
     # set up array to hold the hemisfer LAI estimate
     LAI_hemisfer = np.zeros(n_subplots)
 
-
-    # Also get estimate of lower canopy volume from small SAFE plots
-    """
-    if Plot_name in ['Belian','Seraya','DC1','DC2']:
-        block = 'VJR'
-    elif Plot_name in ['B North', 'B South']:
-        block = 'B'
-    elif Plot_name == 'E':
-        block = 'E'
-    elif Plot_name == 'LF':
-        block = 'LF'
-    else:
-        block = '?'
-
-    Ht,Area,Depth,StemDensity = field.calculate_crown_dimensions_small_plots(stem_data[block]['dbh'],stem_data[block]['height'],stem_data[block]['stem_density'],a_ht, b_ht, CF_ht, a_A, b_A, CF_A, a, b, CF)
-    smallstem_LAD_profile = field.calculate_LAD_profiles_from_stem_size_distributions(heights, Area, Depth, Ht, StemDensity, beta)
-    """
-
     pt_count = 0.
     # loop through subplots, calculating both return profiles and LAD distributions
     for i in range(0,n_subplots):
-        #print "Subplot: ", subplot_labels[Plot_name][i]
         subplot_index = subplot_labels[Plot_name][i]-1
         # filter lidar points into subplot
         sp_pts = lidar.filter_lidar_data_by_polygon(plot_lidar_pts,subplot_polygons[Plot_name][i,:,:])
@@ -173,7 +150,6 @@ for pp in range(0,N_plots):
         mask = np.all((field_data['plot']==Plot_name,field_data['subplot']==subplot_labels[Plot_name][i]),axis=0)
         Ht,Area,Depth = field.calculate_crown_dimensions(field_data['DBH_field'][mask],field_data['Height_field'][mask],field_data['CrownArea'][mask], a_ht, b_ht, CF_ht, a_A, b_A, CF_A, a, b, CF)
         field_LAD_profiles[subplot_index,:], CanopyV = field.calculate_LAD_profiles_generic(heights, Area, Depth, Ht, beta, subplot_area)
-
 
         if Plot_name == 'DC1':
             Ht,Area,Depth,StemDensity = field.calculate_crown_dimensions_for_stem_distributions(DC1_stem_data['dbh'],DC1_stem_data['stem_density'][:,subplot_index],a_ht, b_ht, CF_ht, a_A, b_A, CF_A, a, b, CF)
@@ -518,10 +494,7 @@ xticklabels = ax4a.get_xticklabels() + ax4b.get_xticklabels() + ax4c.get_xtickla
 plt.setp(yticklabels,visible=False)
 plt.setp(xticklabels,visible=False)
 plt.subplots_adjust(hspace=0.2, wspace = 0.1)
-
-#plt.tight_layout()
 plt.savefig(output_dir+'fig5_plot_LAD_profiles.png')
-#plt.show()
 
 #--------------------------------------------------------------------------------------
 # Figure 5: comparison of PAI
@@ -576,7 +549,6 @@ ax5a.set_ylim((0,20))
 
 plt.tight_layout()
 plt.savefig(output_dir+'fig6_lidar_LAI_comparison.png')
-#plt.show()
 
 #--------------------------------------------------------------------------------------
 # Figure 6: LAI vs. hemiphotos
@@ -602,8 +574,6 @@ for i in range(0,N_plots):
     x_err=np.std(Hemisfer_LAI[Plots[i]])/np.sqrt(n_subplots)
     y_err=np.std(MacArthurHorn_LAI[Plots[i]])/np.sqrt(n_subplots)
     ax6a.errorbar(np.mean(Hemisfer_LAI[Plots[i]]),np.mean(MacArthurHorn_LAI[Plots[i]]),x_err,y_err,'o',color='black')
-#ax6a.plot(LAI_hemi_mod, LAI_MH_mod, '-', color = 'k')
-
 
 ax6b = plt.subplot2grid((1,3),(0,1), sharex=ax6a, sharey=ax6a)
 ax6b.annotate('b - radiative transfer', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -622,9 +592,6 @@ for i in range(0,N_plots):
     ax6b.errorbar(np.mean(Hemisfer_LAI[Plots[i]]),np.mean(radiative_LAI[Plots[i]][:,1]),xerr=x_err,yerr=y_err1,marker='o',color='black',mfc='white')
     ax6b.errorbar(np.mean(Hemisfer_LAI[Plots[i]]),np.mean(radiative_DTM_LAI[Plots[i]][:,1]),xerr=x_err,yerr=y_err2,marker='o',color='black')
 
-#ax6b.plot(LAI_hemi_mod, LAI_rad_mod, '-', color = 'k')
-
-
 ax6c = plt.subplot2grid((1,3),(0,2), sharex=ax6a)
 ax6c.annotate('c - field inventory', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
 ax6c.annotate(r_sq_c, xy=(0.95,0.90), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='right', verticalalignment='top', fontsize=10)
@@ -639,15 +606,11 @@ for i in range(0,N_plots):
     y_err=np.std(inventory_LAI[Plots[i]])/np.sqrt(n_subplots)
     ax6c.errorbar(np.mean(Hemisfer_LAI[Plots[i]]),np.mean(inventory_LAI[Plots[i]]),xerr=x_err,yerr=y_err,marker='o',color='black')
 
-
 ax6a.set_xlim((0,10))
 ax6a.set_ylim((0,20))
 ax6c.set_ylim(ymin=0)
 plt.tight_layout()
 plt.savefig(output_dir+'fig11_LAI_hemiphoto_comparison.png')
-#plt.show()
-
-
 
 #--------------------------------------------------------------------------------------
 # Figure 7: LAI vs. canopy volume
@@ -670,7 +633,6 @@ for i in range(0,N_plots):
     x_err=np.std(inventory_LAI[Plots[i]])/np.sqrt(n_subplots)
     y_err=np.std(MacArthurHorn_LAI[Plots[i]])/np.sqrt(n_subplots)
     ax7a.errorbar(np.mean(inventory_LAI[Plots[i]]),np.mean(MacArthurHorn_LAI[Plots[i]]),xerr=x_err,yerr=y_err,marker='o',color='black')
-
 
 ax7b = plt.subplot2grid((1,3),(0,1), sharex=ax7a, sharey=ax7a)
 ax7b.annotate('b - radiative transfer (Detto)', xy=(0.05,0.95), xycoords='axes fraction',backgroundcolor='none',horizontalalignment='left', verticalalignment='top', fontsize=10)
@@ -715,7 +677,6 @@ ax7c.legend(loc=4)
 ax7a.set_ylim((0,20))
 plt.tight_layout()
 plt.savefig(output_dir+'fig10_LiDAR_LAI_canopy_volume_comparison.png')
-#plt.show()
 #--------------------------------------------------------------------------------------
 #Figure 8:  Plot total basal area against LAI from the two preferred methods
 
@@ -818,7 +779,6 @@ ax8b.annotate(r_sq_b, xy=(0.95,0.90), xycoords='axes fraction',backgroundcolor='
 
 plt.tight_layout()
 plt.savefig(output_dir+'fig12_LiDAR_LAI_BasalArea_comparison.png')
-#plt.show()
 #--------------------------------------------------------------------------------------
 # Now put together a table that has all the LAI estimates
 f = open(output_dir+'BALI_LAI_table.csv',"w") #opens file
@@ -924,8 +884,6 @@ for pp in range(0,5):
     axSa.set_ylim(0,80)
     axSb.set_xlim(0,29)
     axSc.set_xlim(xmin=0,xmax=0.7)
-    #axSf.set_xlim(xmin=0,xmax=2.0)
-
     axSb.locator_params(axis='x',nbins=5)
     axSc.locator_params(axis='x',nbins=5)
     axSd.locator_params(axis='x',nbins=5)
