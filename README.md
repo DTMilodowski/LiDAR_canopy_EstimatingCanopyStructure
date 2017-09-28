@@ -3,7 +3,7 @@
 
 (September 2017)
 
-This repository hosts a python library to extract quantitative information about forest canopies from discrete return LiDAR point clouds. It includes all the driver functions required to reproduce the analysis presented in the manuscript: "Estimating Canopy Structure Across A Degradation Gradient In Malaysian Borneo", submitted to Remote Sensing Of Environment.
+This repository hosts a python library to extract quantitative information about forest canopies from discrete return LiDAR point clouds. It includes all the driver functions required to reproduce the analysis presented in the manuscript: "Estimating Tropical Rainforest Canopy Structure Across A Degradation Gradient In Malaysian Borneo", submitted to Remote Sensing Of Environment.
 
 ## What is in the repository?
 This repository hosts code currently under development.  Not all the functions listed in the modules are used in the analysis, as there are some relict functions from previous iterations, and some functions that are currently being used in other projects. The scripts *highlighted* are driver functions used to undertake the analysis presented in the manuscript - that is they call the relavent subroutines from the other modules.
